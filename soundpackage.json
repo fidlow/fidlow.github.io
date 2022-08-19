@@ -23,6 +23,17 @@
                 "size": 2603299,
                 "listen": "http://cnbj2.fds.api.xiaomi.com/dreame-product/dreame.vacuum.p2140/voices/listen/7_en.mp3",
                 "icon": "http://cnbj2.fds.api.xiaomi.com/dreame-product/dreame.vacuum.p2140/voices/icon/english.png"
+            },
+            {
+                "name": {
+                    "default": "Мой"
+                },
+                "id": "RM",
+                "md5sum": "4ef9ee4e2240cfa12716576b0f071fe5",
+                "download": "http://cnbj2.fds.api.xiaomi.com/dreame-product/dreame.vacuum.p2140/voices/package/eyu.tar.gz",
+                "size": 2603299,
+                "listen": "http://cnbj2.fds.api.xiaomi.com/dreame-product/dreame.vacuum.p2140/voices/listen/7_en.mp3",
+                "icon": "http://cnbj2.fds.api.xiaomi.com/dreame-product/dreame.vacuum.p2140/voices/icon/english.png"
             }
         ]
     }
