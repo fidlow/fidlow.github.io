@@ -28,13 +28,326 @@
                 "name": {
                     "default": "Мой"
                 },
-                "id": "RM",
+                "id": "RM1",
                 "md5sum": "4ef9ee4e2240cfa12716576b0f071fe5",
                 "download": "http://cnbj2.fds.api.xiaomi.com/dreame-product/dreame.vacuum.p2140/voices/package/eyu.tar.gz",
                 "size": 2603299,
                 "listen": "http://cnbj2.fds.api.xiaomi.com/dreame-product/dreame.vacuum.p2140/voices/listen/7_en.mp3",
                 "icon": "http://cnbj2.fds.api.xiaomi.com/dreame-product/dreame.vacuum.p2140/voices/icon/english.png"
-            }
+            },
+            {
+                "icon": "https://s1yder.ru/xiaomi/vacuum/dreame/voices/maksim.jpg",
+                "listen": "https://s1yder.ru/xiaomi/vacuum/dreame/voices/maksim.mp3",
+                "name": {
+                    "default": "Максим"
+                },
+                "desc": {},
+                "download": "https://s1yder.ru/xiaomi/vacuum/dreame/voices/maksim.tar.gz",
+                "size": 3488329,
+                "id": "RA",
+                "md5sum": "987abbcf0737e7a9ad08946b61b1836b"
+            },
+            {
+                "icon": "https://s1yder.ru/xiaomi/vacuum/dreame/voices/warcraft2peon.jpg",
+                "listen": "https://s1yder.ru/xiaomi/vacuum/dreame/voices/warcraft2peon.mp3",
+                "name": {
+                    "default": "WarCraft 2 Peon"
+                },
+                "desc": {},
+                "download": "https://s1yder.ru/xiaomi/vacuum/dreame/voices/warcraft2peon.tar.gz",
+                "size": 2931259,
+                "id": "RB",
+                "md5sum": "c3fc7db23e181eb1cc4e481f8ca80083"
+            },
+            {
+                "icon": "https://s1yder.ru/xiaomi/vacuum/dreame/voices/kuzya.jpg",
+                "listen": "https://s1yder.ru/xiaomi/vacuum/dreame/voices/kuzya.mp3",
+                "name": {
+                    "default": "Кузя"
+                },
+                "desc": {},
+                "download": "https://s1yder.ru/xiaomi/vacuum/dreame/voices/kuzya.tar.gz",
+                "size": 3781996,
+                "id": "RC",
+                "md5sum": "b8eb816a841235f0202a981192e37f02"
+            },
+            {
+                "icon": "https://s1yder.ru/xiaomi/vacuum/dreame/voices/maksim_mat.jpg",
+                "listen": "https://s1yder.ru/xiaomi/vacuum/dreame/voices/maksim_mat.mp3",
+                "name": {
+                    "default": "Максим с матом"
+                },
+                "desc": {},
+                "download": "https://s1yder.ru/xiaomi/vacuum/dreame/voices/maksim_mat.tar.gz",
+                "size": 2729036,
+                "id": "RD",
+                "md5sum": "65de85168e25a60e6b9a9ce2ea35545a"
+            },
+			{
+				"icon": "https://skyline-code.github.io/kozhaniy.jpeg",
+                "listen": "https://skyline-code.github.io/kozhaniymat.mp3",
+                "name": {
+                    "default": "Кожаные у*** с матом!"
+                },
+                "desc": {},
+                "download": "https://skyline-code.github.io/kozhaniy.tar.gz",
+                "size": 5869342,
+                "id": "RE",
+                "md5sum": "65e3557fd904d7dd094035deae1d7ab2"
+            },
+            {
+                "icon": "https://borishuypopadesh.github.io/trouver/organizm.png",
+                "listen": "https://borishuypopadesh.github.io/trouver/organizm.mp3",
+                "name": {
+                    "default": "Организм"
+                },
+                "desc": {},
+                "download": "https://borishuypopadesh.github.io/trouver/organizm.tar.gz",
+                "size": 4822451,
+                "id": "RF",
+                "md5sum": "86a1c18db2efe4b8d3fa7db43f8241fb"
+            },
+            ,			
+			{
+				"icon" : "https://dreamef9.my1.ru/DreameF9/Zahar/ru.png",
+				"listen" : "https://dreamef9.my1.ru/DreameF9/Zahar/start_clean_ru.mp3",
+				"name" : {
+					"default" : "Захар"
+				},
+				"desc" : {},
+				"download" : "https://dreamef9.my1.ru/DreameF9/Zahar/ru.tar.gz",
+				"md5sum":"b9bca4cd385234c11d9c4a37cf3b7918",
+				"size":1364610,
+				"id" : "Z0"
+			},
+			{
+				"icon": "https://dreamef9.my1.ru/DreameF9/domovenok/ru.png",
+				"listen": "https://dreamef9.my1.ru/DreameF9/domovenok/start_clean_ru.mp3",
+				"name": {
+					"default": "Домовенок Кузя + Алиса"
+				},
+				"desc": {},
+				"download": "https://dreamef9.my1.ru/DreameF9/domovenok/ru.tar.gz",
+				"md5sum": "9756cc5723491e64535f7ce3a9207043",
+				"size": 1415074,
+				"id": "D0"
+			},
+			{
+				"icon" : "https://dreamef9.my1.ru/DreameF9/eltsin/ru.png",
+				"listen" : "https://dreamef9.my1.ru/DreameF9/eltsin/start_clean_ru.mp3",
+				"name" : {
+					"default" : "Ельцин"
+				},
+				"desc" : {},
+				"download" : "https://dreamef9.my1.ru/DreameF9/eltsin/ru.tar.gz",
+				"md5sum":"59d4f49a466a060f94764a3654a675f2",
+				"size":6365813,
+				"id" : "E0"
+			},
+			{
+				"icon" : "https://dreamef9.my1.ru/DreameF9/Vinni_Puh/ru.png",
+				"listen" : "https://dreamef9.my1.ru/DreameF9/Vinni_Puh/start_clean_ru.mp3",
+				"name" : {
+					"default" : "Винни Пух"
+				},
+				"desc" : {},
+				"download" : "https://dreamef9.my1.ru/DreameF9/Vinni_Puh/ru.tar.gz",
+				"md5sum":"9037b58b9f401a9f57285d0299865393",
+				"size":1536064,
+				"id" : "V0"
+			},
+			{
+				"icon" : "https://dreamef9.my1.ru/DreameF9/Alice/ru.png",
+				"listen" : "https://dreamef9.my1.ru/DreameF9/Alice/start_clean_ru.mp3",
+				"name" : {
+					"default" : "Алиса"
+				},
+				"desc" : {},
+				"download" : "https://dreamef9.my1.ru/DreameF9/Alice/ru.tar.gz",
+				"md5sum":"409cd8721ad5b8659872167044ee3298",
+				"size":5108752,
+				"id" : "A0"
+			},
+			{
+				"icon" : "https://dreamef9.my1.ru/DreameF9/Robot_Bender/ru.png",
+				"listen" : "https://dreamef9.my1.ru/DreameF9/Robot_Bender/start_clean_ru.mp3",
+				"name" : {
+					"default" : "Робот Бендер + Алиса"
+				},
+				"desc" : {},
+				"download" : "https://dreamef9.my1.ru/DreameF9/Robot_Bender/ru.tar.gz",
+				"md5sum":"216645a3357bcf14e67235046f8eca82",
+				"size":1200728,
+				"id" : "R0"
+			},
+			{
+				"icon" : "https://dreamef9.my1.ru/DreameF9/Starcraft_2/ru.png",
+				"listen" : "https://dreamef9.my1.ru/DreameF9/Starcraft_2/start_clean_ru.mp3",
+				"name" : {
+					"default" : "Starcraft 2"
+				},
+				"desc" : {},
+				"download" : "https://dreamef9.my1.ru/DreameF9/Starcraft_2/ru.tar.gz",
+				"md5sum":"26b360e737295e3eaa09c764c0ed5c91",
+				"size":1894466,
+				"id" : "S0"
+			},
+			{
+				"icon" : "https://dreamef9.my1.ru/DreameF9/WarCraft_II/ru.png",
+				"listen" : "https://dreamef9.my1.ru/DreameF9/WarCraft_II/start_clean_ru.mp3",
+				"name" : {
+					"default" : "WarCraft II"
+				},
+				"desc" : {},
+				"download" : "https://dreamef9.my1.ru/DreameF9/WarCraft_II/ru.tar.gz",
+				"md5sum":"9f30a9a9d06d86a9cc2c047875b579df",
+				"size":2105579,
+				"id" : "W0"
+			},
+						{
+				"icon" : "https://dreamef9.my1.ru/DreameF9/r2d2/ru.png",
+				"listen" : "https://dreamef9.my1.ru/DreameF9/r2d2/hello.mp3",
+				"name" : {
+					"default" : "R2D2"
+				},
+				"desc" : {},
+				"download" : "https://dreamef9.my1.ru/DreameF9/r2d2/ru.tar.gz",
+				"md5sum":"a355e519e7b1a1d3d45574bd897138ae",
+				"size":4745913,
+				"id" : "R2"
+			},
+			{
+				"icon" : "https://dreamef9.my1.ru/DreameF9/Maksim_3/ru.png",
+				"listen" : "https://dreamef9.my1.ru/DreameF9/Maksim_3/start_clean_ru.mp3",
+				"name" : {
+					"default" : "Максим"
+				},
+				"desc" : {},
+				"download" : "https://dreamef9.my1.ru/DreameF9/Maksim_3/ru.tar.gz",
+				"md5sum":"06d8234f57f6f162aadaa966d19c1ecc",
+				"size":4929222,
+				"id" : "M3"
+			},
+			{
+				"icon" : "https://dreamef9.my1.ru/DreameF9/Ghenckij/ru.png",
+				"listen" : "https://dreamef9.my1.ru/DreameF9/Ghenckij/start_clean_ru.mp3",
+				"name" : {
+					"default" : "Голос женский"
+				},
+				"desc" : {},
+				"download" : "https://dreamef9.my1.ru/DreameF9/Ghenckij/ru.tar.gz",
+				"md5sum":"e353250025f6e76bedd400ba5a0bbac7",
+				"size":2524065,
+				"id" : "G0"
+			},
+			{
+				"icon" : "https://dreamef9.my1.ru/DreameF9/Tatyana/ru.png",
+				"listen" : "https://dreamef9.my1.ru/DreameF9/Tatyana/start_clean_ru.mp3",
+				"name" : {
+					"default" : "Татьяна"
+				},
+				"desc" : {},
+				"download" : "https://dreamef9.my1.ru/DreameF9/Tatyana/ru.tar.gz",
+				"md5sum":"e25632b784e7f40abcf249518ef9572f",
+				"size":2409232,
+				"id" : "T0"
+			},
+			{
+				"icon" : "https://dreamef9.my1.ru/DreameF9/Maksim_Mat_3/ru.png",
+				"listen" : "https://dreamef9.my1.ru/DreameF9/Maksim_Mat_3/start_clean_ru.mp3",
+				"name" : {
+					"default" : "Максим мат"
+				},
+				"desc" : {},
+				"download" : "https://dreamef9.my1.ru/DreameF9/Maksim_Mat_3/ru.tar.gz",
+				"md5sum":"48fbd1a6ff1c033d2139cb92ee6982bc",
+				"size":4836238,
+				"id" : "M7"
+			},
+			{
+				"icon" : "https://dreamef9.my1.ru/DreameF9/filip/speak-100.png",
+				"listen" : "https://dreamef9.my1.ru/DreameF9/filip/hello.mp3",
+				"name" : {
+					"default" : "Филипп"
+				},
+				"desc" : {},
+				"download" : "https://dreamef9.my1.ru/DreameF9/filip/ru.tar.gz",
+				"md5sum":"8cdca3d7ac656b2cba2b4f50197b2505",
+				"size":2318266,
+				"id" : "F0"
+			},
+			{
+			    "icon": "https://dreamef9.my1.ru/DreameF9/ubludki/ru_maxim.png",
+				"listen": "https://dreamef9.my1.ru/DreameF9/ubludki/hello.mp3",
+				"name": {
+					"default": "Кожаные ублюдки"
+				},
+				"desc": {},
+				"download": "https://dreamef9.my1.ru/DreameF9/ubludki/ru.tar.gz",
+				"md5sum": "6602a37381709e7ff24898295ec7ebe1",
+				"size": 2019199,
+				"id": "M0"
+			},
+			{
+				"icon" : "https://dreamef9.my1.ru/DreameF9/domovenok/ru.png",
+				"listen" : "https://dreamef9.my1.ru/DreameF9/domovenok/start_clean_ru.mp3",
+				"name" : {
+					"default" : "Кузя+Захар"
+				},
+				"desc" : {},
+				"download" : "https://dreamef9.my1.ru/DreameF9/kuzyaz/ku1.tar.gz",
+				"md5sum":"2a3b917c188819abd3ccf3fca051cbf5",
+				"size":1703155,
+				"id" : "K1"
+			},
+			{
+				"icon" : "https://dreamef9.my1.ru/DreameF9/Sovet_film/sovet_film.png",
+				"listen" : "https://dreamef9.my1.ru/DreameF9/Sovet_film/sovet_film.mp3",
+				"name" : {
+					"default" : "Советские фильмы"
+				},
+				"desc" : {},
+				"download" : "https://dreamef9.my1.ru/DreameF9/Sovet_film/soviet_movies.tar.gz",
+				"md5sum":"6e39b171679bb77c22a32cc77204e5eb",
+				"size":2197228,
+				"id" : "S1"
+			},
+			{
+				"icon" : "https://dreamef9.my1.ru/DreameF9/svr_zhena/svr_zhena.png",
+				"listen" : "https://dreamef9.my1.ru/DreameF9/svr_zhena/svr_zhena.mp3",
+				"name" : {
+					"default" : "Сварливая жена"
+				},
+				"desc" : {},
+				"download" : "https://dreamef9.my1.ru/DreameF9/svr_zhena/svr_jn.tar.gz",
+				"md5sum":"157522215fd4c8143fb430cc1dd88b66",
+				"size":1514557,
+				"id" : "ZH1"
+			},
+			{
+				"icon" : "https://dreamef9.my1.ru/DreameF9/ROBO/robo.png",
+				"listen" : "https://dreamef9.my1.ru/DreameF9/ROBO/robo.mp3",
+				"name" : {
+					"default" : "Робо"
+				},
+				"desc" : {},
+				"download" : "https://dreamef9.my1.ru/DreameF9/ROBO/robo_voice.tar.gz",
+				"md5sum":"3dbbc810642c17c502c53f721933da34",
+				"size":2215936,
+				"id" : "RO1"
+			},
+			{
+				"icon" : "https://dreamef9.my1.ru/DreameF9/rick_and_morty/rick_morty.png",
+				"listen" : "https://dreamef9.my1.ru/DreameF9/rick_and_morty/run.mp3",
+				"name" : {
+					"default" : "Rick and Morty"
+				},
+				"desc" : {},
+				"download" : "https://dreamef9.my1.ru/DreameF9/rick_and_morty/rick_and_morty.tar.gz",
+				"md5sum":"5e89e7f8db737a40afc8716ebe3dd9fc",
+				"size":4763566,
+				"id" : "RM0"
+			}
         ]
     }
 }
