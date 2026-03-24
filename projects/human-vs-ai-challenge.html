@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Человек vs Нейросеть</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Unbounded:wght@300;500;700;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #0a0a12;
+    --surface: #12121f;
+    --neon-green: #39ff14;
+    --neon-pink: #ff2d95;
+    --neon-cyan: #00f0ff;
+    --neon-yellow: #ffe53b;
+    --text: #e0e0f0;
+    --dim: #555577;
+  }
+
+  body {
+    font-family: 'Space Mono', monospace;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100dvh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 50%, rgba(57,255,20,0.03) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 50%, rgba(255,45,149,0.03) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .screen { position: relative; z-index: 1; }
+
+  /* ===== TITLE SCREEN ===== */
+  .title-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100dvh;
+    padding: 2rem;
+    text-align: center;
+  }
+
+  .title-screen h1 {
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 900;
+    font-size: clamp(1.8rem, 6vw, 4rem);
+    line-height: 1.1;
+    margin-bottom: 0.5rem;
+  }
+
+  .title-screen h1 .human { color: var(--neon-cyan); text-shadow: 0 0 30px rgba(0,240,255,0.4); }
+  .title-screen h1 .vs { color: var(--dim); font-weight: 300; font-size: 0.6em; }
+  .title-screen h1 .ai { color: var(--neon-pink); text-shadow: 0 0 30px rgba(255,45,149,0.4); }
+
+  .subtitle {
+    color: var(--dim);
+    font-size: clamp(0.75rem, 2vw, 1rem);
+    margin-bottom: 3rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .btn {
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 700;
+    border: none;
+    padding: 1rem 2.5rem;
+    font-size: clamp(1rem, 3vw, 1.3rem);
+    border-radius: 60px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .btn-start {
+    background: var(--neon-green);
+    color: #000;
+    box-shadow: 0 0 40px rgba(57,255,20,0.3);
+  }
+
+  .btn-start:active { transform: scale(0.95); }
+
+  /* ===== GAME SCREEN ===== */
+  .game-screen {
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh;
+    padding: 0.75rem;
+    gap: 0.5rem;
+  }
+
+  .scoreboard {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    background: var(--surface);
+    border-radius: 12px;
+    border: 1px solid #222240;
+    font-size: 0.8rem;
+  }
+
+  .score-human { color: var(--neon-cyan); }
+  .score-ai { color: var(--neon-pink); }
+  .score-val { font-family: 'Unbounded', sans-serif; font-weight: 700; font-size: 1.4rem; }
+  .round-info { color: var(--dim); font-size: 0.7rem; text-align: center; }
+  .round-num { color: var(--neon-yellow); font-family: 'Unbounded'; font-weight: 700; }
+
+  /* Canvas */
+  .canvas-wrap {
+    flex: 1;
+    min-height: 180px;
+    max-height: 45dvh;
+    background: var(--surface);
+    border-radius: 12px;
+    border: 1px solid #222240;
+    overflow: hidden;
+    position: relative;
+  }
+
+  canvas { width: 100%; height: 100%; display: block; }
+
+  .canvas-msg {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.7rem;
+    color: var(--dim);
+    background: rgba(10,10,18,0.85);
+    padding: 4px 12px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+
+  /* Controls */
+  .controls {
+    background: var(--surface);
+    border-radius: 16px;
+    border: 1px solid #222240;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .control-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .control-label {
+    min-width: 55px;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--dim);
+  }
+
+  .slider-wrap { flex: 1; position: relative; }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    outline: none;
+    background: #222240;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+
+  .slider-angle::-webkit-slider-thumb { background: var(--neon-cyan); box-shadow: 0 0 12px rgba(0,240,255,0.5); }
+  .slider-power::-webkit-slider-thumb { background: var(--neon-yellow); box-shadow: 0 0 12px rgba(255,229,59,0.5); }
+
+  .control-value {
+    min-width: 50px;
+    text-align: right;
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+  }
+
+  .val-angle { color: var(--neon-cyan); }
+  .val-power { color: var(--neon-yellow); }
+
+  .btn-fire {
+    background: var(--neon-green);
+    color: #000;
+    box-shadow: 0 0 30px rgba(57,255,20,0.25);
+    padding: 0.9rem;
+    font-size: 1.1rem;
+    width: 100%;
+  }
+
+  .btn-fire:disabled {
+    background: #333;
+    color: #666;
+    box-shadow: none;
+    cursor: not-allowed;
+  }
+
+  .btn-next {
+    background: transparent;
+    border: 2px solid var(--neon-green);
+    color: var(--neon-green);
+    padding: 0.9rem;
+    font-size: 1rem;
+    width: 100%;
+  }
+
+  /* Result overlay */
+  .result-banner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 900;
+    font-size: clamp(1rem, 4vw, 1.8rem);
+    padding: 0.6rem 1.5rem;
+    border-radius: 12px;
+    text-align: center;
+    z-index: 10;
+    animation: popIn 0.3s ease-out;
+    white-space: nowrap;
+  }
+
+  @keyframes popIn { from { transform: translate(-50%, -50%) scale(0.5); opacity: 0; } }
+
+  .result-win { background: rgba(0,240,255,0.15); border: 2px solid var(--neon-cyan); color: var(--neon-cyan); }
+  .result-lose { background: rgba(255,45,149,0.15); border: 2px solid var(--neon-pink); color: var(--neon-pink); }
+  .result-tie { background: rgba(255,229,59,0.15); border: 2px solid var(--neon-yellow); color: var(--neon-yellow); }
+
+  /* AI thinking */
+  .ai-status {
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--neon-pink);
+    min-height: 1.2rem;
+    animation: pulse 1s infinite;
+  }
+
+  @keyframes pulse { 50% { opacity: 0.5; } }
+
+  /* ===== FINAL SCREEN ===== */
+  .final-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100dvh;
+    padding: 2rem;
+    text-align: center;
+    gap: 1.5rem;
+  }
+
+  .final-title {
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 900;
+    font-size: clamp(1.5rem, 5vw, 3rem);
+  }
+
+  .final-scores {
+    display: flex;
+    gap: 2rem;
+    font-family: 'Unbounded', sans-serif;
+  }
+
+  .final-score-block { text-align: center; }
+  .final-score-block .label { font-size: 0.7rem; color: var(--dim); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.3rem; }
+  .final-score-block .big { font-size: clamp(2rem, 8vw, 4rem); font-weight: 900; }
+
+  .ai-insight {
+    background: var(--surface);
+    border: 1px solid #222240;
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    max-width: 400px;
+    font-size: 0.8rem;
+    color: var(--dim);
+    line-height: 1.6;
+  }
+
+  .ai-insight strong { color: var(--neon-pink); }
+
+  .btn-restart {
+    background: transparent;
+    border: 2px solid var(--neon-cyan);
+    color: var(--neon-cyan);
+    padding: 0.8rem 2rem;
+    font-size: 1rem;
+  }
+
+  .hidden { display: none !important; }
+
+  /* Landscape helper for phones */
+  @media (max-height: 500px) {
+    .game-screen { padding: 0.3rem; gap: 0.3rem; }
+    .controls { padding: 0.5rem; gap: 0.4rem; }
+    .scoreboard { padding: 0.3rem 0.75rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TITLE -->
+<div id="titleScreen" class="screen title-screen">
+  <h1>
+    <span class="human">ЧЕЛОВЕК</span><br>
+    <span class="vs">vs</span><br>
+    <span class="ai">НЕЙРОСЕТЬ</span>
+  </h1>
+  <p class="subtitle">Артиллерийский вызов</p>
+  <button class="btn btn-start" onclick="startGame()">Играть</button>
+</div>
+
+<!-- GAME -->
+<div id="gameScreen" class="screen game-screen hidden">
+  <div class="scoreboard">
+    <div class="score-human">
+      <div style="font-size:0.65rem;opacity:0.7;">ТЫ</div>
+      <div class="score-val" id="humanScore">0</div>
+    </div>
+    <div class="round-info">
+      Раунд <span class="round-num" id="roundNum">1</span>/5
+    </div>
+    <div class="score-ai">
+      <div style="font-size:0.65rem;opacity:0.7;">ИИ</div>
+      <div class="score-val" id="aiScore">0</div>
+    </div>
+  </div>
+
+  <div class="canvas-wrap">
+    <canvas id="gameCanvas"></canvas>
+    <div class="canvas-msg" id="canvasMsg">Выбери угол и силу, затем — ОГОНЬ!</div>
+    <div class="result-banner hidden" id="resultBanner"></div>
+  </div>
+
+  <div id="aiStatus" class="ai-status" style="min-height:1.2rem;">&nbsp;</div>
+
+  <div class="controls" id="controlsPanel">
+    <div class="control-row">
+      <div class="control-label">Угол</div>
+      <div class="slider-wrap">
+        <input type="range" class="slider-angle" id="angleSlider" min="5" max="85" value="45" oninput="updateSliders()">
+      </div>
+      <div class="control-value val-angle" id="angleVal">45°</div>
+    </div>
+    <div class="control-row">
+      <div class="control-label">Сила</div>
+      <div class="slider-wrap">
+        <input type="range" class="slider-power" id="powerSlider" min="10" max="100" value="50" oninput="updateSliders()">
+      </div>
+      <div class="control-value val-power" id="powerVal">50%</div>
+    </div>
+    <button class="btn btn-fire" id="fireBtn" onclick="fire()">🔥 ОГОНЬ!</button>
+    <button class="btn btn-next hidden" id="nextBtn" onclick="nextRound()">Следующий раунд →</button>
+  </div>
+</div>
+
+<!-- FINAL -->
+<div id="finalScreen" class="screen final-screen hidden">
+  <div class="final-title" id="finalTitle"></div>
+  <div class="final-scores">
+    <div class="final-score-block">
+      <div class="label">Человек</div>
+      <div class="big" style="color:var(--neon-cyan);" id="finalHuman">0</div>
+    </div>
+    <div class="final-score-block">
+      <div class="label">Нейросеть</div>
+      <div class="big" style="color:var(--neon-pink);" id="finalAI">0</div>
+    </div>
+  </div>
+  <div class="ai-insight" id="aiInsight"></div>
+  <button class="btn btn-restart" onclick="restart()">Сыграть ещё раз</button>
+</div>
+
+<script>
+// ===== GAME STATE =====
+const ROUNDS = 5;
+const GRAVITY = 9.81;
+const MAX_VELOCITY = 42;
+
+let state = {};
+
+function initState() {
+  state = {
+    round: 1,
+    humanScore: 0,
+    aiScore: 0,
+    phase: 'aim', // aim, humanFly, aiFly, result
+    targetX: 0,
+    targetW: 0,
+    humanTrail: [],
+    aiTrail: [],
+    humanDist: null,
+    aiDist: null,
+    // AI "neural net" memory
+    aiMemory: [],
+    aiGeneration: 0,
+  };
+}
+
+// ===== CANVAS =====
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+let W, H, scale, groundY;
+
+function resize() {
+  const rect = canvas.parentElement.getBoundingClientRect();
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  canvas.style.width = rect.width + 'px';
+  canvas.style.height = rect.height + 'px';
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  W = rect.width;
+  H = rect.height;
+  groundY = H - 30;
+  scale = W / 600; // virtual 600 units wide
+}
+
+window.addEventListener('resize', resize);
+
+// ===== DRAWING =====
+function drawScene() {
+  ctx.clearRect(0, 0, W, H);
+
+  // Ground
+  ctx.fillStyle = '#1a1a2e';
+  ctx.fillRect(0, groundY, W, H - groundY);
+  ctx.strokeStyle = '#2a2a4a';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(0, groundY);
+  ctx.lineTo(W, groundY);
+  ctx.stroke();
+
+  // Grid lines
+  ctx.strokeStyle = 'rgba(255,255,255,0.03)';
+  for (let i = 0; i < W; i += 50 * scale) {
+    ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, groundY); ctx.stroke();
+  }
+  for (let i = 0; i < groundY; i += 50 * scale) {
+    ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(W, i); ctx.stroke();
+  }
+
+  // Launcher
+  const lx = 30 * scale;
+  const ly = groundY;
+  ctx.fillStyle = '#00f0ff';
+  ctx.shadowColor = 'rgba(0,240,255,0.5)';
+  ctx.shadowBlur = 10;
+  ctx.beginPath();
+  ctx.arc(lx, ly - 6, 8 * scale, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.shadowBlur = 0;
+
+  // Angle indicator
+  if (state.phase === 'aim') {
+    const angle = parseInt(document.getElementById('angleSlider').value);
+    const rad = angle * Math.PI / 180;
+    const len = 40 * scale;
+    ctx.strokeStyle = 'rgba(0,240,255,0.4)';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.moveTo(lx, ly - 6);
+    ctx.lineTo(lx + Math.cos(rad) * len, ly - 6 - Math.sin(rad) * len);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  // Target
+  const tx = state.targetX;
+  const tw = state.targetW;
+  // Target glow
+  ctx.fillStyle = 'rgba(255,229,59,0.08)';
+  ctx.fillRect(tx - tw/2 - 10, groundY - 40, tw + 20, 40);
+  // Target base
+  ctx.fillStyle = '#ffe53b';
+  ctx.shadowColor = 'rgba(255,229,59,0.6)';
+  ctx.shadowBlur = 15;
+  ctx.fillRect(tx - tw/2, groundY - 4, tw, 4);
+  ctx.shadowBlur = 0;
+  // Target flag
+  ctx.strokeStyle = '#ffe53b';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(tx, groundY - 4);
+  ctx.lineTo(tx, groundY - 28);
+  ctx.stroke();
+  ctx.fillStyle = '#ffe53b';
+  ctx.beginPath();
+  ctx.moveTo(tx, groundY - 28);
+  ctx.lineTo(tx + 12 * scale, groundY - 22);
+  ctx.lineTo(tx, groundY - 16);
+  ctx.fill();
+
+  // Trails
+  drawTrail(state.humanTrail, 'rgba(0,240,255,', '#00f0ff');
+  drawTrail(state.aiTrail, 'rgba(255,45,149,', '#ff2d95');
+
+  // Distance indicators
+  if (state.humanDist !== null && state.phase === 'result') {
+    drawDistLabel(state.humanTrail, state.humanDist, '#00f0ff', 'ТЫ');
+  }
+  if (state.aiDist !== null && state.phase === 'result') {
+    drawDistLabel(state.aiTrail, state.aiDist, '#ff2d95', 'ИИ');
+  }
+}
+
+function drawTrail(trail, rgbaBase, solidColor) {
+  if (trail.length < 2) return;
+  // Trail line
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = solidColor;
+  ctx.globalAlpha = 0.4;
+  ctx.beginPath();
+  ctx.moveTo(trail[0].sx, trail[0].sy);
+  for (let i = 1; i < trail.length; i++) {
+    ctx.lineTo(trail[i].sx, trail[i].sy);
+  }
+  ctx.stroke();
+  ctx.globalAlpha = 1;
+
+  // Impact point
+  const last = trail[trail.length - 1];
+  ctx.fillStyle = solidColor;
+  ctx.shadowColor = solidColor;
+  ctx.shadowBlur = 12;
+  ctx.beginPath();
+  ctx.arc(last.sx, last.sy, 5 * scale, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.shadowBlur = 0;
+}
+
+function drawDistLabel(trail, dist, color, label) {
+  if (trail.length === 0) return;
+  const last = trail[trail.length - 1];
+  const distText = dist.toFixed(1) + 'м';
+  ctx.font = `bold ${11 * scale}px 'Space Mono'`;
+  ctx.fillStyle = color;
+  ctx.textAlign = 'center';
+  ctx.fillText(label + ': ' + distText, last.sx, last.sy - 14 * scale);
+}
+
+// ===== PHYSICS =====
+function simulate(angleDeg, powerPct) {
+  const v0 = (powerPct / 100) * MAX_VELOCITY;
+  const rad = angleDeg * Math.PI / 180;
+  const vx = v0 * Math.cos(rad);
+  const vy = v0 * Math.sin(rad);
+  const dt = 0.05;
+  const trail = [];
+  let x = 0, y = 0, t = 0;
+  const launchX = 30;
+
+  while (t < 20) {
+    const px = launchX + vx * t;
+    const py = vy * t - 0.5 * GRAVITY * t * t;
+    const sx = px * scale;
+    const sy = groundY - py * scale * 3;
+
+    trail.push({ x: px, y: py, sx, sy });
+
+    if (t > 0.1 && py <= 0) break;
+    t += dt;
+  }
+
+  // Landing x
+  const landX = trail.length > 0 ? trail[trail.length - 1].x : launchX;
+  // Ensure last point is on ground
+  if (trail.length > 0) {
+    trail[trail.length - 1].sy = groundY;
+  }
+
+  const targetCenterVirtual = state.targetX / scale;
+  const dist = Math.abs(landX - targetCenterVirtual);
+
+  return { trail, landX, dist };
+}
+
+// ===== AI "NEURAL NET" =====
+function aiDecide() {
+  const targetVX = state.targetX / scale;
+  const distNeeded = targetVX - 30; // distance from launcher
+
+  // If we have memory, use it to "learn"
+  if (state.aiMemory.length >= 2) {
+    // Simple gradient descent approach: find best past shot and perturb
+    let best = state.aiMemory.reduce((a, b) => a.dist < b.dist ? a : b);
+
+    // Add some "exploration" noise that decreases with generation
+    const noise = Math.max(2, 15 - state.aiGeneration * 3);
+    let angle = best.angle + (Math.random() - 0.5) * noise;
+    let power = best.power + (Math.random() - 0.5) * noise;
+
+    angle = Math.max(5, Math.min(85, angle));
+    power = Math.max(10, Math.min(100, power));
+
+    return { angle: Math.round(angle), power: Math.round(power) };
+  }
+
+  // First attempts: analytical approximation with intentional error
+  // Range = v^2 * sin(2θ) / g, solve for best angle/power
+  // But add error so AI isn't perfect immediately
+  const errorFactor = 0.7 + Math.random() * 0.4; // 70%-110% accuracy
+  const bestAngle = 45;
+  const neededRange = distNeeded / (scale * 3 / scale); // convert
+  const v0needed = Math.sqrt(neededRange * GRAVITY / Math.sin(2 * bestAngle * Math.PI / 180));
+  const powerPct = (v0needed / MAX_VELOCITY) * 100 * errorFactor;
+
+  const angle = bestAngle + (Math.random() - 0.5) * 20;
+  const power = Math.max(10, Math.min(100, powerPct));
+
+  return { angle: Math.round(Math.max(5, Math.min(85, angle))), power: Math.round(power) };
+}
+
+// ===== ANIMATION =====
+let animFrame = null;
+let animTrail = [];
+let animIdx = 0;
+let animTarget = null; // 'human' or 'ai'
+let animCallback = null;
+
+function animateShot(fullTrail, target, callback) {
+  animTrail = fullTrail;
+  animIdx = 0;
+  animTarget = target;
+  animCallback = callback;
+
+  if (target === 'human') state.humanTrail = [];
+  else state.aiTrail = [];
+
+  animStep();
+}
+
+function animStep() {
+  if (animIdx >= animTrail.length) {
+    if (animCallback) animCallback();
+    return;
+  }
+
+  // Add points in batches for speed
+  const batch = Math.max(1, Math.floor(animTrail.length / 40));
+  for (let i = 0; i < batch && animIdx < animTrail.length; i++, animIdx++) {
+    if (animTarget === 'human') state.humanTrail.push(animTrail[animIdx]);
+    else state.aiTrail.push(animTrail[animIdx]);
+  }
+
+  drawScene();
+  animFrame = requestAnimationFrame(animStep);
+}
+
+// ===== GAME FLOW =====
+function newTarget() {
+  // Place target in the right 60% of the screen, varying each round
+  const minX = W * 0.35;
+  const maxX = W * 0.85;
+  state.targetX = minX + Math.random() * (maxX - minX);
+  state.targetW = 20 + Math.random() * 20;
+}
+
+function updateSliders() {
+  document.getElementById('angleVal').textContent = document.getElementById('angleSlider').value + '°';
+  document.getElementById('powerVal').textContent = document.getElementById('powerSlider').value + '%';
+  drawScene();
+}
+
+function fire() {
+  if (state.phase !== 'aim') return;
+  state.phase = 'humanFly';
+
+  const angle = parseInt(document.getElementById('angleSlider').value);
+  const power = parseInt(document.getElementById('powerSlider').value);
+
+  document.getElementById('fireBtn').disabled = true;
+  document.getElementById('canvasMsg').textContent = 'Летит...';
+
+  const result = simulate(angle, power);
+  state.humanDist = result.dist;
+
+  animateShot(result.trail, 'human', () => {
+    // Now AI shoots
+    state.phase = 'aiFly';
+    document.getElementById('aiStatus').textContent = '🧠 Нейросеть анализирует данные...';
+    document.getElementById('canvasMsg').textContent = 'ИИ думает...';
+
+    setTimeout(() => {
+      const aiParams = aiDecide();
+      document.getElementById('aiStatus').textContent =
+        `🧠 ИИ выбрал: ${aiParams.angle}° / ${aiParams.power}%`;
+
+      const aiResult = simulate(aiParams.angle, aiParams.power);
+      state.aiDist = aiResult.dist;
+
+      // Store in AI memory for learning
+      state.aiMemory.push({
+        angle: aiParams.angle,
+        power: aiParams.power,
+        dist: aiResult.dist,
+        targetX: state.targetX
+      });
+      state.aiGeneration++;
+
+      setTimeout(() => {
+        animateShot(aiResult.trail, 'ai', () => showRoundResult());
+      }, 300);
+    }, 800 + Math.random() * 700);
+  });
+}
+
+function showRoundResult() {
+  state.phase = 'result';
+  drawScene();
+
+  const banner = document.getElementById('resultBanner');
+  banner.classList.remove('hidden', 'result-win', 'result-lose', 'result-tie');
+
+  const humanWins = state.humanDist < state.aiDist;
+  const tie = Math.abs(state.humanDist - state.aiDist) < 0.5;
+
+  if (tie) {
+    banner.className = 'result-banner result-tie';
+    banner.textContent = '🤝 НИЧЬЯ!';
+    state.humanScore++;
+    state.aiScore++;
+  } else if (humanWins) {
+    banner.className = 'result-banner result-win';
+    banner.textContent = '🎯 ТЫ БЛИЖЕ!';
+    state.humanScore++;
+  } else {
+    banner.className = 'result-banner result-lose';
+    banner.textContent = '🤖 ИИ БЛИЖЕ!';
+    state.aiScore++;
+  }
+
+  document.getElementById('humanScore').textContent = state.humanScore;
+  document.getElementById('aiScore').textContent = state.aiScore;
+  document.getElementById('canvasMsg').textContent =
+    `Ты: ${state.humanDist.toFixed(1)}м | ИИ: ${state.aiDist.toFixed(1)}м от цели`;
+
+  document.getElementById('fireBtn').classList.add('hidden');
+  document.getElementById('nextBtn').classList.remove('hidden');
+  document.getElementById('aiStatus').innerHTML = '&nbsp;';
+
+  if (state.round >= ROUNDS) {
+    document.getElementById('nextBtn').textContent = 'Результаты →';
+  }
+}
+
+function nextRound() {
+  const banner = document.getElementById('resultBanner');
+  banner.classList.add('hidden');
+
+  if (state.round >= ROUNDS) {
+    showFinal();
+    return;
+  }
+
+  state.round++;
+  state.humanTrail = [];
+  state.aiTrail = [];
+  state.humanDist = null;
+  state.aiDist = null;
+  state.phase = 'aim';
+
+  newTarget();
+
+  document.getElementById('roundNum').textContent = state.round;
+  document.getElementById('fireBtn').classList.remove('hidden');
+  document.getElementById('fireBtn').disabled = false;
+  document.getElementById('nextBtn').classList.add('hidden');
+  document.getElementById('nextBtn').textContent = 'Следующий раунд →';
+  document.getElementById('canvasMsg').textContent = 'Выбери угол и силу, затем — ОГОНЬ!';
+  document.getElementById('aiStatus').innerHTML = '&nbsp;';
+
+  drawScene();
+}
+
+function showFinal() {
+  document.getElementById('gameScreen').classList.add('hidden');
+  document.getElementById('finalScreen').classList.remove('hidden');
+
+  document.getElementById('finalHuman').textContent = state.humanScore;
+  document.getElementById('finalAI').textContent = state.aiScore;
+
+  const title = document.getElementById('finalTitle');
+  if (state.humanScore > state.aiScore) {
+    title.textContent = '🏆 ЧЕЛОВЕК ПОБЕДИЛ!';
+    title.style.color = 'var(--neon-cyan)';
+  } else if (state.aiScore > state.humanScore) {
+    title.textContent = '🤖 ИИ ПОБЕДИЛ!';
+    title.style.color = 'var(--neon-pink)';
+  } else {
+    title.textContent = '🤝 НИЧЬЯ!';
+    title.style.color = 'var(--neon-yellow)';
+  }
+
+  // AI learning insight
+  const insight = document.getElementById('aiInsight');
+  const firstDist = state.aiMemory.length > 0 ? state.aiMemory[0].dist : 0;
+  const lastDist = state.aiMemory.length > 0 ? state.aiMemory[state.aiMemory.length - 1].dist : 0;
+  const improved = firstDist > lastDist;
+
+  insight.innerHTML = `<strong>Как училась нейросеть?</strong><br><br>` +
+    `Первый выстрел ИИ: промах <strong>${firstDist.toFixed(1)}м</strong><br>` +
+    `Последний выстрел: промах <strong>${lastDist.toFixed(1)}м</strong><br><br>` +
+    (improved
+      ? `ИИ улучшил точность в <strong>${(firstDist/Math.max(0.1,lastDist)).toFixed(1)}x</strong> раз! Каждый раунд нейросеть запоминала результат и корректировала параметры — это и есть <strong>обучение с подкреплением</strong>.`
+      : `В этот раз ИИ не смог обойти интуицию человека. Но с большим числом попыток нейросеть всегда выходит вперёд — <strong>данные решают всё</strong>.`
+    );
+}
+
+// ===== START / RESTART =====
+function startGame() {
+  document.getElementById('titleScreen').classList.add('hidden');
+  document.getElementById('gameScreen').classList.remove('hidden');
+
+  initState();
+  resize();
+  newTarget();
+
+  document.getElementById('humanScore').textContent = '0';
+  document.getElementById('aiScore').textContent = '0';
+  document.getElementById('roundNum').textContent = '1';
+  document.getElementById('fireBtn').classList.remove('hidden');
+  document.getElementById('fireBtn').disabled = false;
+  document.getElementById('nextBtn').classList.add('hidden');
+  document.getElementById('aiStatus').innerHTML = '&nbsp;';
+
+  updateSliders();
+  drawScene();
+}
+
+function restart() {
+  document.getElementById('finalScreen').classList.add('hidden');
+  document.getElementById('titleScreen').classList.remove('hidden');
+}
+
+// Initial resize
+resize();
+</script>
+</body>
+</html>
