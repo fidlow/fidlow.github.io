@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Лаборатория: Код и Гравитация</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #1e293b;
+      --panel-2: #111827;
+      --border: #334155;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --blue: #60a5fa;
+      --green: #34d399;
+      --emerald: #10b981;
+      --purple: #c084fc;
+      --yellow: #fbbf24;
+      --red: #ef4444;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .app {
+      min-height: 100vh;
+      padding: 16px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 16px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .title {
+      margin: 0;
+      font-size: 32px;
+      font-weight: 700;
+      background: linear-gradient(90deg, #60a5fa, #34d399);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      margin: 8px 0 0;
+      color: var(--muted);
+    }
+
+    .score-box {
+      font-size: 28px;
+      font-weight: 700;
+      background: #0b1220;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 18px;
+      white-space: nowrap;
+    }
+
+    .score-value {
+      color: var(--green);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 24px;
+    }
+
+    .left-col,
+    .right-col {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
+    }
+
+    .code-card {
+      background: #1e1e1e;
+      font-family: Consolas, Monaco, monospace;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .card h2 {
+      margin: 0 0 16px;
+      font-size: 22px;
+    }
+
+    .blue-title {
+      color: #93c5fd;
+    }
+
+    .green-title {
+      color: #86efac;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .control-group {
+      margin-bottom: 18px;
+    }
+
+    .control-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    .value-blue {
+      color: var(--blue);
+      font-family: Consolas, monospace;
+      font-weight: 700;
+    }
+
+    .value-green {
+      color: var(--green);
+      font-family: Consolas, monospace;
+      font-weight: 700;
+    }
+
+    .value-purple {
+      color: var(--purple);
+      font-family: Consolas, monospace;
+      font-weight: 700;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      cursor: pointer;
+    }
+
+    .code-line {
+      color: #cbd5e1;
+    }
+
+    .kw {
+      color: #f472b6;
+    }
+
+    .var {
+      color: #93c5fd;
+    }
+
+    .num {
+      color: #fde047;
+    }
+
+    .comment {
+      color: #64748b;
+    }
+
+    .canvas-wrap {
+      position: relative;
+      overflow: hidden;
+      padding: 8px;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: auto;
+      background: #020617;
+      border-radius: 12px;
+      aspect-ratio: 800 / 400;
+    }
+
+    .overlay {
+      position: absolute;
+      top: 24px;
+      left: 24px;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(8px);
+      border: 1px solid #475569;
+      border-radius: 12px;
+      padding: 12px 16px;
+      max-width: calc(100% - 48px);
+    }
+
+    .overlay-message {
+      font-size: 20px;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .overlay-time {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+      font-family: Consolas, monospace;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 16px;
+    }
+
+    button {
+      border: none;
+      border-radius: 16px;
+      padding: 16px 20px;
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .fire-btn {
+      flex: 1;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: white;
+      background: linear-gradient(90deg, #10b981, #14b8a6);
+      box-shadow: 0 10px 24px rgba(16, 185, 129, 0.2);
+    }
+
+    .fire-btn:hover:not(:disabled) {
+      filter: brightness(1.08);
+    }
+
+    .target-btn {
+      background: #334155;
+      color: white;
+    }
+
+    .target-btn:hover:not(:disabled) {
+      background: #475569;
+    }
+
+    .trajectory-btn {
+      background: #1e3a2f;
+      color: #34d399;
+      border: 1px solid #34d399;
+    }
+
+    .trajectory-btn:hover:not(:disabled) {
+      background: #14532d;
+    }
+
+    .trajectory-btn.hidden {
+      background: #1e293b;
+      color: #64748b;
+      border: 1px solid #475569;
+    }
+
+    @media (max-width: 960px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .title {
+        font-size: 26px;
+      }
+
+      .score-box {
+        font-size: 22px;
+      }
+
+      .buttons {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="container">
+      <header class="header">
+        <div>
+          <h1 class="title">Лаборатория: Код и Гравитация</h1>
+          <p class="subtitle">Изменяй значения переменных (IT), чтобы управлять баллистикой (Физика).</p>
+        </div>
+        <div class="score-box">
+          Счет: <span id="score" class="score-value">0</span>
+        </div>
+      </header>
+
+      <div class="layout">
+        <div class="left-col">
+          <div class="card">
+            <h2 class="blue-title">1. Панель управления</h2>
+
+            <div class="control-group">
+              <label class="control-label">
+                <span>Скорость (V₀)</span>
+                <span id="velocityValue" class="value-blue">65 м/с</span>
+              </label>
+              <input id="velocity" type="range" min="20" max="120" value="65" />
+            </div>
+
+            <div class="control-group">
+              <label class="control-label">
+                <span>Угол запуска (α)</span>
+                <span id="angleValue" class="value-green">45°</span>
+              </label>
+              <input id="angle" type="range" min="10" max="80" value="45" />
+            </div>
+
+            <div class="control-group">
+              <label class="control-label">
+                <span>Гравитация (g)</span>
+                <span id="gravityValue" class="value-purple">9.8 м/с²</span>
+              </label>
+              <input id="gravity" type="range" min="1" max="25" step="0.1" value="9.8" />
+            </div>
+          </div>
+
+          <div class="card code-card">
+            <h2 class="green-title">2. Исполняемый код</h2>
+
+            <div class="code-line"><span class="kw">const</span> <span class="var">v0</span> = <span id="codeVelocity" class="num">65</span>;</div>
+            <div class="code-line"><span class="kw">const</span> <span class="var">angle</span> = <span id="codeAngle" class="num">45</span>;</div>
+            <div class="code-line"><span class="kw">const</span> <span class="var">g</span> = <span id="codeGravity" class="num">9.8</span>;</div>
+
+            <br>
+
+            <div class="code-line comment">// Перевод градусов в радианы</div>
+            <div class="code-line"><span class="kw">let</span> <span class="var">rad</span> = angle * Math.PI / <span class="num">180</span>;</div>
+
+            <br>
+
+            <div class="code-line comment">// Уравнения движения (Физика!)</div>
+            <div class="code-line"><span class="kw">let</span> <span class="var">x</span> = v0 * Math.cos(rad) * t;</div>
+            <div class="code-line"><span class="kw">let</span> <span class="var">y</span> = (v0 * Math.sin(rad) * t) - (<span class="num">0.5</span> * g * t * t);</div>
+          </div>
+        </div>
+
+        <div class="right-col">
+          <div class="card canvas-wrap">
+            <canvas id="gameCanvas" width="800" height="400"></canvas>
+
+            <div class="overlay">
+              <p id="message" class="overlay-message">Настрой переменные и нажми Запуск!</p>
+              <p id="timeText" class="overlay-time" style="display:none;">t = 0.0 сек.</p>
+            </div>
+          </div>
+
+          <div class="buttons">
+            <button id="fireBtn" class="fire-btn">Запуск (Execute)</button>
+            <button id="targetBtn" class="target-btn">Сменить мишень</button>
+            <button id="trajectoryBtn" class="trajectory-btn">Скрыть траекторию</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    const velocityInput = document.getElementById('velocity');
+    const angleInput = document.getElementById('angle');
+    const gravityInput = document.getElementById('gravity');
+
+    const velocityValue = document.getElementById('velocityValue');
+    const angleValue = document.getElementById('angleValue');
+    const gravityValue = document.getElementById('gravityValue');
+
+    const codeVelocity = document.getElementById('codeVelocity');
+    const codeAngle = document.getElementById('codeAngle');
+    const codeGravity = document.getElementById('codeGravity');
+
+    const scoreEl = document.getElementById('score');
+    const messageEl = document.getElementById('message');
+    const timeTextEl = document.getElementById('timeText');
+
+    const fireBtn = document.getElementById('fireBtn');
+    const targetBtn = document.getElementById('targetBtn');
+
+    const canvasWidth = 800;
+    const canvasHeight = 400;
+    const startX = 50;
+    const groundY = canvasHeight - 40;
+
+    let velocity = 65;
+    let angle = 45;
+    let gravity = 9.8;
+
+    let showTrajectory = true;
+    let isPlaying = false;
+    let time = 0;
+    let targetPos = { x: 600, y: groundY };
+    let score = 0;
+    let message = 'Настрой переменные и нажми Запуск!';
+
+    let animationId = null;
+    let moveTargetTimeout = null;
+
+    function updateUI() {
+      velocityValue.textContent = `${velocity} м/с`;
+      angleValue.textContent = `${angle}°`;
+      gravityValue.textContent = `${gravity} м/с²`;
+
+      codeVelocity.textContent = velocity;
+      codeAngle.textContent = angle;
+      codeGravity.textContent = gravity;
+
+      scoreEl.textContent = score;
+      messageEl.textContent = message;
+
+      if (isPlaying) {
+        timeTextEl.style.display = 'block';
+        timeTextEl.textContent = `t = ${time.toFixed(1)} сек.`;
+      } else {
+        timeTextEl.style.display = 'none';
+      }
+
+      velocityInput.disabled = isPlaying;
+      angleInput.disabled = isPlaying;
+      gravityInput.disabled = isPlaying;
+      fireBtn.disabled = isPlaying;
+      targetBtn.disabled = isPlaying;
+
+      fireBtn.textContent = isPlaying ? 'В полете...' : 'Запуск (Execute)';
+    }
+
+    function moveTarget() {
+      const newX = Math.floor(Math.random() * 450) + 300;
+      targetPos = { x: newX, y: groundY };
+      time = 0;
+      isPlaying = false;
+      cancelAnimation();
+      updateUI();
+      render();
+    }
+
+    function handleReset() {
+      time = 0;
+      isPlaying = false;
+      message = 'Настрой переменные и нажми Запуск!';
+      cancelAnimation();
+      updateUI();
+      render();
+    }
+
+    function handleFire() {
+      if (isPlaying) return;
+      time = 0;
+      isPlaying = true;
+      message = '🚀 Снаряд в полете...';
+      updateUI();
+      animate();
+    }
+
+    function cancelAnimation() {
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+        animationId = null;
+      }
+      if (moveTargetTimeout) {
+        clearTimeout(moveTargetTimeout);
+        moveTargetTimeout = null;
+      }
+    }
+
+    function getRad() {
+      return (angle * Math.PI) / 180;
+    }
+
+    function render() {
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+      ctx.fillStyle = '#334155';
+      ctx.fillRect(0, groundY, canvasWidth, canvasHeight - groundY);
+
+      ctx.strokeStyle = '#1e293b';
+      ctx.lineWidth = 1;
+
+      for (let i = 0; i < canvasWidth; i += 50) {
+        ctx.beginPath();
+        ctx.moveTo(i, 0);
+        ctx.lineTo(i, canvasHeight);
+        ctx.stroke();
+      }
+
+      for (let i = 0; i < canvasHeight; i += 50) {
+        ctx.beginPath();
+        ctx.moveTo(0, i);
+        ctx.lineTo(canvasWidth, i);
+        ctx.stroke();
+      }
+
+      const rad = getRad();
+
+      ctx.fillStyle = '#ef4444';
+      ctx.beginPath();
+      ctx.arc(targetPos.x, targetPos.y - 10, 15, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = 'white';
+      ctx.beginPath();
+      ctx.arc(targetPos.x, targetPos.y - 10, 8, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#ef4444';
+      ctx.beginPath();
+      ctx.arc(targetPos.x, targetPos.y - 10, 3, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.save();
+      ctx.translate(startX, groundY);
+      ctx.rotate(-rad);
+      ctx.fillStyle = '#3b82f6';
+      ctx.fillRect(0, -10, 40, 20);
+      ctx.restore();
+
+      ctx.fillStyle = '#94a3b8';
+      ctx.beginPath();
+      ctx.arc(startX, groundY, 15, Math.PI, 0);
+      ctx.fill();
+
+      if (!isPlaying && showTrajectory) {
+        ctx.beginPath();
+        ctx.setLineDash([5, 5]);
+        ctx.strokeStyle = '#10b981';
+        ctx.lineWidth = 2;
+        ctx.moveTo(startX, groundY);
+
+        for (let t = 0; t < 20; t += 0.1) {
+          const px = startX + velocity * Math.cos(rad) * t;
+          const py = groundY - (velocity * Math.sin(rad) * t - 0.5 * gravity * t * t);
+
+          if (py > groundY) {
+            ctx.lineTo(px, groundY);
+            break;
+          }
+
+          ctx.lineTo(px, py);
+        }
+
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+
+      let currentX = startX + velocity * Math.cos(rad) * time;
+      let currentY = groundY - (velocity * Math.sin(rad) * time - 0.5 * gravity * time * time);
+
+      if (isPlaying) {
+        const dist = Math.hypot(currentX - targetPos.x, currentY - (targetPos.y - 10));
+
+        if (dist < 20) {
+          isPlaying = false;
+          score += 1;
+          message = '🎯 Прямое попадание! Отличный код!';
+          currentY = Math.min(currentY, groundY);
+          updateUI();
+          renderProjectile(currentX, currentY);
+          moveTargetTimeout = setTimeout(moveTarget, 2000);
+          return;
+        } else if (currentY >= groundY && time > 0.5) {
+          isPlaying = false;
+          currentY = groundY;
+          message = '❌ Промах! Измени переменные и попробуй снова.';
+          updateUI();
+        }
+      }
+
+      renderProjectile(currentX, currentY);
+    }
+
+    function renderProjectile(x, y) {
+      ctx.save();
+      ctx.fillStyle = '#fbbf24';
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = '#fbbf24';
+      ctx.beginPath();
+      ctx.arc(x, y, 8, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function animate() {
+      render();
+      updateUI();
+
+      if (!isPlaying) {
+        animationId = null;
+        return;
+      }
+
+      animationId = requestAnimationFrame(() => {
+        time += 0.15;
+        animate();
+      });
+    }
+
+    velocityInput.addEventListener('input', (e) => {
+      velocity = Number(e.target.value);
+      handleReset();
+    });
+
+    angleInput.addEventListener('input', (e) => {
+      angle = Number(e.target.value);
+      handleReset();
+    });
+
+    gravityInput.addEventListener('input', (e) => {
+      gravity = Number(e.target.value);
+      handleReset();
+    });
+
+    const trajectoryBtn = document.getElementById('trajectoryBtn');
+
+    trajectoryBtn.addEventListener('click', () => {
+      showTrajectory = !showTrajectory;
+      trajectoryBtn.textContent = showTrajectory ? 'Скрыть траекторию' : 'Показать траекторию';
+      trajectoryBtn.classList.toggle('hidden', !showTrajectory);
+      render();
+    });
+
+    fireBtn.addEventListener('click', handleFire);
+    targetBtn.addEventListener('click', moveTarget);
+
+    updateUI();
+    render();
+  </script>
+</body>
+</html>
